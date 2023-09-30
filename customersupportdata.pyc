@@ -158,3 +158,5 @@ ticket_sources.to_csv('ticket_sources.csv', index=False, mode='w')
 knowledgebase_levels.to_csv('knowledgebase_levels.csv', index=False, mode='w')
 knowledgebase_articles.to_csv('knowledgebase_articles.csv', index=False, mode='w')
 customer_tickets.to_csv('customer_tickets.csv', index=False, mode='w')
+
+print("Data has been created.")
