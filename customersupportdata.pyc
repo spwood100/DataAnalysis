@@ -1,0 +1,160 @@
+#Creates synthetic data using Python to create a sample customer support organisation based on a fictious global company.
+
+
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+from faker import Faker  # You may need to install the 'Faker' library
+
+# Set the number of records for various parts of the dataset
+num_analysts = 50
+num_customers = 500
+num_tickets = 10000
+
+# Create a Faker instance to generate real names, revenue, and verticals
+fake = Faker()
+
+# Generate real-world first names and last names for analysts
+real_first_names = [fake.first_name() for _ in range(num_analysts)]
+real_last_names = [fake.last_name() for _ in range(num_analysts)]
+
+# Generate real-world customer names and verticals
+customer_names = [fake.company() for _ in range(num_customers)]
+customer_verticals = [fake.word(ext_word_list=['Technology', 'Healthcare', 'Finance', 'Retail', 'Manufacturing']) for _ in range(num_customers)]
+
+# Generate dates for tickets
+ticket_open_dates = [datetime(2021, 1, 1) + timedelta(days=np.random.randint(0, 1000)) for _ in range(num_tickets)]
+ticket_closed_dates = [date + timedelta(hours=np.random.randint(1, 72)) for date in ticket_open_dates]
+
+# Create Analysts DataFrame with 50 analysts
+analysts = pd.DataFrame({
+    'Analyst_ID': range(1, num_analysts + 1),
+    'First_Name': real_first_names,
+    'Last_Name': real_last_names,
+    'Department': np.random.choice(['Technical Support', 'Billing Support', 'Product Support'], size=num_analysts),
+    'Team_ID': np.arange(1, num_analysts + 1)  # Each analyst has a unique team
+})
+
+# Create Teams DataFrame with teams in every location
+# Assuming 4 teams, one in each location
+teams = pd.DataFrame({
+    'Team_ID': range(1, 5),
+    'Team_Name': ['Team A', 'Team B', 'Team C', 'Team D'],
+    'Location_ID': range(1, 5)  # One team in each location
+})
+
+# Create a Revenue Table (for simplicity, generate random revenue values)
+revenue_data = {
+    'Customer_ID': range(1001, 1001 + num_customers),
+    'Total_Revenue': np.random.randint(1000, 10000, size=num_customers)  # Example revenue values
+}
+revenue_table = pd.DataFrame(revenue_data)
+
+# Create Customers DataFrame with Location_ID and link to Revenue Table
+customers = pd.DataFrame({
+    'Customer_ID': range(1001, 1001 + num_customers),
+    'Customer_Name': customer_names,
+    'Email': [f'customer_{i}@example.com' for i in range(1, num_customers + 1)],
+    'Phone': ['555-555-5555' for _ in range(num_customers)],
+    'Location_ID': np.random.randint(1, 5, size=num_customers),  # Link to customer locations
+    'Vertical': customer_verticals
+})
+
+# Create Customer Verticals Lookup Table (for real-world vertical examples)
+verticals = pd.DataFrame({
+    'Vertical_ID': range(1, 6),
+    'Vertical_Name': ['Technology', 'Healthcare', 'Finance', 'Retail', 'Manufacturing']
+})
+
+# Create Revenue DataFrame
+revenue = pd.DataFrame({
+    'Customer_ID': range(1001, 1001 + num_customers),
+    'Total_Revenue': np.random.randint(1000, 10000, size=num_customers)  # Example revenue values
+})
+
+# Create Resolution Types DataFrame
+resolution_types = pd.DataFrame({
+    'Resolution_Type_ID': range(501, 504),
+    'Resolution_Type': ['Resolved', 'Unresolved', 'Escalated']
+})
+
+# Create Issue Types DataFrame
+issue_types = pd.DataFrame({
+    'Issue_Type_ID': range(601, 604),
+    'Issue_Type': ['Technical Issue', 'Billing Issue', 'Product Inquiry']
+})
+
+# Create Statuses DataFrame
+statuses = pd.DataFrame({
+    'Status_ID': range(701, 705),
+    'Status': ['Open', 'In Progress', 'On Hold', 'Closed']
+})
+
+# Create Ticket Lifecycle States DataFrame
+ticket_lifecycle_states = pd.DataFrame({
+    'Lifecycle_State_ID': range(801, 804),
+    'Lifecycle_State': ['Assigned', 'In Review', 'Escalated']
+})
+
+# Create Ticket Sources DataFrame
+ticket_sources = pd.DataFrame({
+    'Source_ID': range(901, 905),
+    'Source_Name': ['Email', 'Phone', 'Chat', 'Web']
+})
+
+# Create Knowledgebase Levels DataFrame
+knowledgebase_levels = pd.DataFrame({
+    'KB_Level_ID': range(1001, 1004),
+    'KB_Level_Detail': ['Basic', 'Intermediate', 'Advanced']
+})
+
+# Create Knowledgebase Articles DataFrame with Summary
+knowledgebase_articles = pd.DataFrame({
+    'KB_Article_ID': range(2001, 2001 + num_tickets),
+    'KB_Article_Name': [f'KB_Article_{i}' for i in range(1, num_tickets + 1)],
+    'KB_Article_Summary': [f'Summary for KB_Article_{i}' for i in range(1, num_tickets + 1)],
+    'Content_Category': np.random.choice(['Troubleshooting', 'FAQ', 'How-To', 'Reference'], size=num_tickets),
+    'Resolution_Ticket_ID': np.random.choice(range(2001, 2001 + num_tickets), size=num_tickets)  # Link to resolved tickets
+})
+
+# Create Customer Tickets DataFrame with 10,000 tickets
+customer_tickets = pd.DataFrame({
+    'Ticket_ID': range(2001, 2001 + num_tickets),
+    'Date_Opened': ticket_open_dates,
+    'Date_Closed': ticket_closed_dates,
+    'Customer_ID': np.random.choice(range(1001, 1001 + num_customers), size=num_tickets),  # Link to customers
+    'Analyst_ID': np.random.choice(range(1, num_analysts + 1), size=num_tickets),  # Link to analysts
+    'Product_ID': np.random.randint(101, 105, size=num_tickets),  # Link to products
+    'Issue_Type_ID': np.random.choice(range(601, 604), size=num_tickets),  # Link to issue types
+    'Resolution_Type_ID': np.random.choice(range(501, 504), size=num_tickets),  # Link to resolution types
+    'Status_ID': np.random.choice(range(701, 705), size=num_tickets),  # Link to statuses
+    'Lifecycle_State_ID': np.random.choice(range(801, 804), size=num_tickets),  # Link to ticket lifecycle states
+    'Source_ID': np.random.choice(range(901, 905), size=num_tickets),  # Link to ticket sources
+    'Knowledgebase_Level_ID': np.random.choice(range(1001, 1004), size=num_tickets),  # Link to knowledgebase levels
+    'Resolution_Time (hours)': np.random.randint(1, 72, size=num_tickets),
+    'Satisfaction_Rating': np.random.randint(1, 6, size=num_tickets)
+})
+
+# Add SLA_ID to Customer Tickets DataFrame (Link to SLA)
+customer_tickets['SLA_ID'] = np.random.choice(range(301, 305), size=num_tickets)
+
+# Calculate total revenue for each customer and link to Customers DataFrame
+customer_revenue = revenue.groupby('Customer_ID')['Total_Revenue'].sum().reset_index()
+customers = pd.merge(customers, customer_revenue, on='Customer_ID', how='left')
+
+# Calculate total time spent on each ticket and add it to the Tickets DataFrame
+customer_tickets['Total_Time_Spent (hours)'] = np.random.randint(1, 72, size=num_tickets)  # Example time spent values
+
+# Save DataFrames as CSV files (overwrite existing files)
+analysts.to_csv('analysts.csv', index=False, mode='w')
+revenue_table.to_csv('revenue_table.csv', index=False, mode='w')
+customers.to_csv('customers.csv', index=False, mode='w')
+verticals.to_csv('customer_verticals.csv', index=False, mode='w')  # Save customer verticals as a lookup table
+resolution_types.to_csv('resolution_types.csv', index=False, mode='w')
+issue_types.to_csv('issue_types.csv', index=False, mode='w')
+statuses.to_csv('statuses.csv', index=False, mode='w')
+ticket_lifecycle_states.to_csv('ticket_lifecycle_states.csv', index=False, mode='w')
+ticket_sources.to_csv('ticket_sources.csv', index=False, mode='w')
+knowledgebase_levels.to_csv('knowledgebase_levels.csv', index=False, mode='w')
+knowledgebase_articles.to_csv('knowledgebase_articles.csv', index=False, mode='w')
+customer_tickets.to_csv('customer_tickets.csv', index=False, mode='w')
